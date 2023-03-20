@@ -14,7 +14,12 @@ public class SpawnPlayers : MonoBehaviour
     {
         instance = this;
         spawnPoints = GetComponentsInChildren<SpawnPoint>();
-        Transform spawn = spawnPoints[Random.RandomRange(0,spawnPoints.Length)].transform;
+        Respawn();
+    }
+
+    public void Respawn()
+    {
+        Transform spawn = spawnPoints[Random.RandomRange(0, spawnPoints.Length)].transform;
         GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, spawn.position, spawn.rotation);
         camera.targetObject = player;
         camera.target = player.transform;

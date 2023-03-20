@@ -9,15 +9,15 @@ using TMPro;
 public class MovementScript : MonoBehaviour
 {
     public TMP_Text nameTag;
-    public float movSpeed = 50;
-    public float maxSpeed = 15;
-    public float drag = 0.98f;
-    public float steerAngle = 20;
-    public float traction = 1;
+    float movSpeed = 60;
+    float maxSpeed = 15;
+    float drag = 0.98f;
+    float steerAngle = 20;
+    float traction = 3;
     private Rigidbody thisRb;
-    private float health = 1.0f;
     PhotonView view;
-
+    [SerializeField] Transform shootPoint;
+    [SerializeField] GameObject bulletPrefab;
     float right = 0.0f;
     int button;
     int toMove;
@@ -139,46 +139,20 @@ public class MovementScript : MonoBehaviour
         view = GetComponent<PhotonView>();
         // RunProcess(); uncomment to use fpga
         nameTag.text = view.Owner.NickName;
+       
     }
     void shoot()
     {
-
+        GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, shootPoint.position, shootPoint.rotation);
+        bullet.active=true;
+        bullet.GetComponent<Rigidbody>().velocity = shootPoint.forward * 3f;
+       
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "Enemy")
-        {
-           // health -= 5;
-          //  rb.AddForce(0, 0, -10000);
-            //   CameraShake = Camera.GetComponent<CameraShake>();
-            //   CameraShake.shakecamera();
-
-        }
-        if (collision.gameObject.tag == "InstaKill")
-        {
-            health = 0;
-            
-        }
-
-        if (collision.gameObject.tag == "heart")
-        {
-
-            if (health <= 50)
-            { health += 50; }
-            else { health = 100; }
-
-        }
-
-    }
-
+  
     // Update is called once per frame
     void Update()
     {
-        if (health == 0)
-        {
-            Die();
-        }
         if (view.IsMine)
         {
             // if(button > 1){
@@ -207,13 +181,13 @@ public class MovementScript : MonoBehaviour
             UnityEngine.Debug.DrawRay(transform.position, transform.forward * 3, Color.blue);
             moveForce = Vector3.Lerp(moveForce.normalized, transform.forward, traction * Time.deltaTime) * moveForce.magnitude;
 
-            
+            if (Input.GetMouseButtonDown(0))
+            {
+                shoot();
+            }
             
         }
         
     }
-    void Die()
-    {
-        PhotonNetwork.Destroy(this.gameObject);
-    }
+
 }
