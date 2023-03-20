@@ -10,27 +10,27 @@ using System.IO;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 using TMPro;
-public class MovementScript : MonoBehaviour
+public class MovementScript : MonoBehaviour, Damagable
 {
     public SpawnPlayers spawnManager;
-    public int health;
+    public float health;
     public TMP_Text nameTag;
     float movSpeed = 60;
     float maxSpeed = 15;
     float drag = 0.98f;
     float steerAngle = 20;
     float traction = 3;
-    private Rigidbody thisRb;
+    private Rigidbody rb;
     PhotonView view;
     [SerializeField] Transform shootPoint;
     [SerializeField] GameObject bulletPrefab;
     float right = 0.0f;
     int button;
     int toMove;
-
+    const float maxHealth = 10f;
     // Variables
     private Vector3 moveForce;
-
+    public PlayerManager playerManager;
     private StreamWriter _inputStreamWriter;
 
     private async Task RunProcess()
@@ -178,26 +178,34 @@ public class MovementScript : MonoBehaviour
         // Start is called before the first frame update
         void Start()
         {
-            spawnManager = GameObject.Find("Spawn Players").GetComponent<SpawnPlayers>();
-
-            view = GetComponent<PhotonView>();
+            
+            health = maxHealth;
+          
             // RunProcess(); uncomment to use fpga
-            thisRb = GetComponent<Rigidbody>();
+        
             nameTag.text = view.Owner.NickName;
 
         }
 
         void Awake()
         {
-            health = 10;
-
+            view = GetComponent<PhotonView>();
+            rb = GetComponent<Rigidbody>();
+            playerManager = PhotonView.Find((int)view.InstantiationData[0]).GetComponent<PlayerManager>();
         }
-
+   
+    
+   
         void shoot()
         {
-            GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, shootPoint.position, shootPoint.rotation);
-            bullet.GetComponent<Rigidbody>().velocity = shootPoint.forward * 3f;
-
+            UnityEngine.Debug.Log(" Shot fired");
+        //GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, shootPoint.position, shootPoint.rotation);
+        //bullet.GetComponent<Rigidbody>().velocity = shootPoint.forward * 3f;
+        if (Physics.Raycast(shootPoint.position, shootPoint.forward, out RaycastHit hit))
+            {
+                UnityEngine.Debug.Log(hit.collider.gameObject.name+" has been hit");
+                hit.collider.gameObject.GetComponent<Damagable>()?.TakeDamage(1);
+            }
         }
         void OnCollisionEnter(Collision collision)
         {
@@ -211,17 +219,10 @@ public class MovementScript : MonoBehaviour
             }
         }
 
-
-        // Update is called once per frame
         void FixedUpdate()
         {
-            if (health <= 0)
-            {
-                spawnManager.Respawn();
-            }
             if (view.IsMine)
             {
-
                 // if(button > 1){
                 //     toMove = 1;
                 // }
@@ -232,7 +233,7 @@ public class MovementScript : MonoBehaviour
                 // Moving
                 // moveForce += transform.forward * movSpeed * toMove * Time.deltaTime; uncomment to use fpga
                 moveForce += transform.forward * movSpeed * Input.GetAxis("Vertical") * Time.deltaTime;
-                thisRb.position += moveForce * Time.deltaTime;
+                rb.position += moveForce * Time.deltaTime;
 
                 // Steering
                 // float steerInput = right; uncomment to use FPGA
@@ -247,6 +248,16 @@ public class MovementScript : MonoBehaviour
                 UnityEngine.Debug.DrawRay(transform.position, moveForce.normalized * 3);
                 UnityEngine.Debug.DrawRay(transform.position, transform.forward * 3, Color.blue);
                 moveForce = Vector3.Lerp(moveForce.normalized, transform.forward, traction * Time.deltaTime) * moveForce.magnitude;
+            }
+        }
+        // Update is called once per frame
+        void Update()
+        {
+
+            if (view.IsMine)
+            {
+
+             
 
                 if(Input.GetMouseButtonDown(0))
                 {
@@ -256,5 +267,27 @@ public class MovementScript : MonoBehaviour
             }
 
         }
+        public void TakeDamage(float damage)
+        {
+            view.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+        }
 
-    }
+        [PunRPC]
+        void RPC_TakeDamage(float damage)
+        {
+            if (!view.IsMine)
+            {
+              return;
+            }
+
+            health -= damage;
+            if (health <= 0)
+            {
+                playerManager.Die();
+            }
+
+        }
+       
+       
+
+}
