@@ -147,11 +147,38 @@ public class MovementScript : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        
+        if (collision.gameObject.tag == "Enemy")
+        {
+           // health -= 5;
+          //  rb.AddForce(0, 0, -10000);
+            //   CameraShake = Camera.GetComponent<CameraShake>();
+            //   CameraShake.shakecamera();
+
+        }
+        if (collision.gameObject.tag == "InstaKill")
+        {
+            health = 0;
+            
+        }
+
+        if (collision.gameObject.tag == "heart")
+        {
+
+            if (health <= 50)
+            { health += 50; }
+            else { health = 100; }
+
+        }
+
     }
+
     // Update is called once per frame
     void Update()
     {
+        if (health == 0)
+        {
+            Die();
+        }
         if (view.IsMine)
         {
             // if(button > 1){
@@ -179,8 +206,14 @@ public class MovementScript : MonoBehaviour
             UnityEngine.Debug.DrawRay(transform.position, moveForce.normalized * 3);
             UnityEngine.Debug.DrawRay(transform.position, transform.forward * 3, Color.blue);
             moveForce = Vector3.Lerp(moveForce.normalized, transform.forward, traction * Time.deltaTime) * moveForce.magnitude;
+
+            
             
         }
         
+    }
+    void Die()
+    {
+        PhotonNetwork.Destroy(this.gameObject);
     }
 }
