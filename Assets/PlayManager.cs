@@ -9,16 +9,23 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PlayManager : MonoBehaviour
 {
-    PhotonView view;
-    int health;
+    [System.Serializable]
+    public struct HealthData
+    {
+        public int currentHealth;
+        public bool hasChanged;
+    }
 
+    PhotonView view;
+    public HealthData healthData;
 
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "InstaKill")
         {
-            health -= 1;
-            Debug.Log("Health = "+health);
+            healthData.currentHealth -= 1;
+            healthData.hasChanged = true;
+            Debug.Log("Health = "+healthData.currentHealth);
         }
     }
 
