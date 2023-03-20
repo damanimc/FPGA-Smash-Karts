@@ -9,36 +9,25 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PlayManager : MonoBehaviour
 {
-    [System.Serializable]
-    public struct HealthData
+    PhotonView view;
+   
+
+    private void Awake()
     {
-        public int currentHealth;
-        public bool hasChanged;
+        view = GetComponent<PhotonView>();
     }
 
-    PhotonView view;
-    public HealthData healthData;
-
-    private void OnCollisionEnter(Collision collision)
+    private void Start()
     {
-        if (collision.gameObject.tag == "InstaKill")
-        {
-            healthData.currentHealth -= 1;
-            healthData.hasChanged = true;
-            Debug.Log("Health = "+healthData.currentHealth);
+        if (view.IsMine) {
+            CreateController();
         }
     }
 
-
     // Start is called before the first frame update
-    void Start()
+    void CreateController()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

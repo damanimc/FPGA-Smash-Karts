@@ -6,7 +6,7 @@ public class SpawnPlayers : MonoBehaviour
 {
     public static SpawnPlayers instance;
     SpawnPoint[] spawnPoints;
-
+    GameObject player;
     public GameObject playerPrefab;
     public SmoothFollow camera;
 
@@ -17,11 +17,18 @@ public class SpawnPlayers : MonoBehaviour
         Respawn();
     }
 
-    public void Respawn()
-    {
+    public void Respawn() { 
+    
         Transform spawn = spawnPoints[Random.RandomRange(0, spawnPoints.Length)].transform;
-        GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, spawn.position, spawn.rotation);
+        player = PhotonNetwork.Instantiate(playerPrefab.name, spawn.position, spawn.rotation);
         camera.targetObject = player;
         camera.target = player.transform;
+    }
+    public void Update()
+    {
+        if (player.GetComponent<MovementScript>().health == 0) {
+            PhotonNetwork.Destroy(player);
+            Respawn();
+        }
     }
 }
