@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Linq;
+using System.IO;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 using TMPro;
 public class MovementScript : MonoBehaviour
@@ -27,6 +31,8 @@ public class MovementScript : MonoBehaviour
     // Variables
     private Vector3 moveForce;
 
+    private StreamWriter _inputStreamWriter;
+
     private async Task RunProcess()
     {
     ProcessStartInfo startInfo = new ProcessStartInfo
@@ -35,12 +41,14 @@ public class MovementScript : MonoBehaviour
         Arguments = "--instance 0",
         UseShellExecute = false,
         RedirectStandardOutput = true,
+        RedirectStandardInput = true,
         CreateNoWindow = false
     };
 
     Process process = new Process();
     process.StartInfo = startInfo;
     process.Start();
+    _inputStreamWriter = process.StandardInput;
 
     while (true)
     {
@@ -49,6 +57,37 @@ public class MovementScript : MonoBehaviour
 
             string line = await process.StandardOutput.ReadLineAsync();
             UnityEngine.Debug.Log(line);
+            int hlth = healthData.currentHealth;
+            
+
+            if(healthData.hasChanged){
+                if(hlth == 100){
+                    await _inputStreamWriter.WriteLineAsync('f');
+                    await _inputStreamWriter.FlushAsync();
+                }
+                else if(hlth == 0){
+                    await _inputStreamWriter.WriteLineAsync('d');
+                    await _inputStreamWriter.FlushAsync();
+                }
+                else {
+                    await _inputStreamWriter.WriteLineAsync('h');
+                    await _inputStreamWriter.FlushAsync();
+                    if(hlth > 9){
+                        string hlths = hlth.ToString();
+                        await _inputStreamWriter.WriteLineAsync(hlths[0]);
+                        await _inputStreamWriter.FlushAsync();
+                        await _inputStreamWriter.WriteLineAsync(hlths[1]);
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    else{
+                        await _inputStreamWriter.WriteLineAsync('0');
+                        await _inputStreamWriter.FlushAsync();
+                        await _inputStreamWriter.WriteLineAsync((char)hlth);
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                }
+                healthData.hasChanged = false;
+            }
 
             if (line == "l0")
             {
@@ -132,6 +171,16 @@ public class MovementScript : MonoBehaviour
         // Wait for a short amount of time before checking for new data again
         //await Task.Delay(1); // Delay for 100 milliseconds
     }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "InstaKill")
+        {
+            healthData.currentHealth -= 1;
+            healthData.hasChanged = true;
+            Debug.Log("Health = "+healthData.currentHealth);
+        }
     }
 
     // Start is called before the first frame update
