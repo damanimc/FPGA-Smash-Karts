@@ -210,7 +210,7 @@ public class MovementScript : MonoBehaviour
         bullet.GetComponent<Rigidbody>().velocity = shootPoint.forward * 3f;
        
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollision(Collision collision)
     {
         if (collision.gameObject.tag == "InstaKill")
         {
