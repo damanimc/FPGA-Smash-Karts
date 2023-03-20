@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TMPro;
 public class MovementScript : MonoBehaviour
 {
+    public int health;
     public TMP_Text nameTag;
     float movSpeed = 60;
     float maxSpeed = 15;
@@ -135,9 +136,11 @@ public class MovementScript : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-     
+
+        health = 10;
         view = GetComponent<PhotonView>();
         // RunProcess(); uncomment to use fpga
+        
         nameTag.text = view.Owner.NickName;
        
     }
@@ -148,8 +151,16 @@ public class MovementScript : MonoBehaviour
         bullet.GetComponent<Rigidbody>().velocity = shootPoint.forward * 3f;
        
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "InstaKill")
+        {
+            health -= 1;
+            UnityEngine.Debug.Log("Health = " + health);
+        }
+    }
 
-  
+
     // Update is called once per frame
     void Update()
     {
