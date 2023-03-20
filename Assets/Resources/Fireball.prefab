@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 5264275336849308824}
   - component: {fileID: 559304554592775157}
   - component: {fileID: -8159515060270744954}
-  - component: {fileID: 5337205456204767662}
   m_Layer: 0
   m_Name: Fireball
   m_TagString: InstaKill
@@ -142,19 +141,6 @@ MonoBehaviour:
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!114 &-8159515060270744954
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5912574732028766419}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd61022b7243f1d44ae886ad8af6a243, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lifeSpan: 5
---- !u!114 &5337205456204767662
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

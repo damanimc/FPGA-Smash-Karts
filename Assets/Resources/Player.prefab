@@ -494,6 +494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04e3b066197716148846d81ce9c6efce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnManager: {fileID: 0}
   health: 0
   nameTag: {fileID: 5702115715974329999}
   shootPoint: {fileID: 2089642501428834867}

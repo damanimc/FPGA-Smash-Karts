@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TMPro;
 public class MovementScript : MonoBehaviour
 {
+    public SpawnPlayers spawnManager;
     public int health;
     public TMP_Text nameTag;
     float movSpeed = 60;
@@ -136,18 +137,27 @@ public class MovementScript : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-
-        health = 10;
+        spawnManager = GameObject.Find("Spawn Players").GetComponent<SpawnPlayers>();
+       
         view = GetComponent<PhotonView>();
         // RunProcess(); uncomment to use fpga
-        
+        thisRb = GetComponent<Rigidbody>();
         nameTag.text = view.Owner.NickName;
        
     }
+
+    public void Awake()
+    {
+        health = 10;
+        
+    }
+
     void shoot()
     {
         GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, shootPoint.position, shootPoint.rotation);
-        bullet.active=true;
+      
+       
+
         bullet.GetComponent<Rigidbody>().velocity = shootPoint.forward * 3f;
        
     }
@@ -155,28 +165,36 @@ public class MovementScript : MonoBehaviour
     {
         if (collision.gameObject.tag == "InstaKill")
         {
-            health -= 1;
+            health -= 10;
+            
             UnityEngine.Debug.Log("Health = " + health);
+
+            
         }
     }
 
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        if (health <= 0)
+        {
+            spawnManager.Respawn();
+        }
         if (view.IsMine)
         {
+            
             // if(button > 1){
             //     toMove = 1;
             // }
             // else {
             //     toMove = 0;
             // } uncomment to use fpga
-           
+
             // Moving
             // moveForce += transform.forward * movSpeed * toMove * Time.deltaTime; uncomment to use fpga
             moveForce += transform.forward * movSpeed * Input.GetAxis("Vertical") * Time.deltaTime;
-            transform.position += moveForce * Time.deltaTime;
+            thisRb.position += moveForce * Time.deltaTime;
 
             // Steering
             // float steerInput = right; uncomment to use FPGA
