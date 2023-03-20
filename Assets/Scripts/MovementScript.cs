@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-
+using TMPro;
 public class MovementScript : MonoBehaviour
 {
-
+    public TMP_Text nameTag;
     public float movSpeed = 50;
     public float maxSpeed = 15;
     public float drag = 0.98f;
@@ -21,8 +21,9 @@ public class MovementScript : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        thisRb = this.gameObject.GetComponent<Rigidbody>();
+     
         view = GetComponent<PhotonView>();
+        nameTag.text = view.Owner.NickName;
     }
     void shoot()
     {

@@ -14,6 +14,7 @@ public class SpawnPlayers : MonoBehaviour
     {
         Vector3 randomPosition = new Vector3(Random.Range(minX,maxX),0,Random.Range(minZ,maxZ));
         GameObject player = PhotonNetwork.Instantiate(playerPrefab.name, randomPosition, Quaternion.identity);
+        player.GetComponent<MovementScript>().nameTag.text = PhotonNetwork.NickName;
         camera.targetObject = player;
         camera.target = player.transform;
     }
