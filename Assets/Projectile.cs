@@ -5,26 +5,23 @@ using Photon.Pun;
 public class Projectile : MonoBehaviour
 {
     PhotonView view;
-    [SerializeField] float lifeSpan=2f;
+    [SerializeField] int maxBounces=3;
+    private int bounces = 0;
     // Start is called before the first frame update
     private void Awake()
     {
-        StartCoroutine(Wait(lifeSpan, 0));
-       
-
+      
     }
     private void OnCollisionEnter(Collision collision)
     {
       
-            if (collision.gameObject.tag == "Player") { PhotonNetwork.Destroy(this.gameObject); }
-      
+        if (collision.gameObject.tag == "Player") { PhotonNetwork.Destroy(this.gameObject); }
+        bounces += 1;
        
     }
-    IEnumerator Wait(float seconds, int index)
+    private void FixedUpdate()
     {
-        
-            yield return new WaitForSeconds(seconds);
-            PhotonNetwork.Destroy(gameObject);
-       
+        if (bounces >= maxBounces) { PhotonNetwork.Destroy(this.gameObject); }
     }
+
 }
