@@ -533,6 +533,8 @@ MonoBehaviour:
   cameraTarget: {fileID: 2987212115739575246}
   bulletPrefab: {fileID: 5912574732028766419, guid: f4cacc00d62fe314fb7a41bc524de1f9, type: 3}
   playerManager: {fileID: 0}
+  bulletTrail: {fileID: 253605537509715868, guid: e22c9eeb3fa55e2438a4c6735fd02e6e, type: 3}
+  bulletImpact: {fileID: 6988620519048037763, guid: 48041763374453640922b230d4c1a03a, type: 3}
 --- !u!114 &2100524771363334419
 MonoBehaviour:
   m_ObjectHideFlags: 0

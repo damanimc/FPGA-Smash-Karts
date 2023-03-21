@@ -33,6 +33,8 @@ public class MovementScript : MonoBehaviour, Damagable
     // Variables
     private Vector3 moveForce;
     public PlayerManager playerManager;
+    public TrailRenderer bulletTrail;
+    public GameObject bulletImpact;
 
 
     // private StreamWriter _inputStreamWriter;
@@ -216,9 +218,34 @@ public class MovementScript : MonoBehaviour, Damagable
         //bullet.GetComponent<Rigidbody>().velocity = shootPoint.forward * 3f;
         if (Physics.Raycast(shootPoint.position, shootPoint.forward, out RaycastHit hit))
             {
+                TrailRenderer trail = Instantiate(bulletTrail, shootPoint.position, shootPoint.rotation);
+                
+                StartCoroutine(SpawnTrail(trail, hit.point,hit.normal));
                 UnityEngine.Debug.Log(hit.collider.gameObject.name+" has been hit");
                 hit.collider.gameObject.GetComponentInParent<Damagable>()?.TakeDamage(1);
+              
             }
+        else {
+            TrailRenderer trail = Instantiate(bulletTrail, shootPoint.position, shootPoint.rotation);
+
+            StartCoroutine(SpawnTrail(trail, shootPoint.position+shootPoint.forward*100, shootPoint.position + shootPoint.forward * 100));
+        }
+        }
+        private IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hitPoint, Vector3 hitNormal)
+        {
+            float time = 0;
+            Vector3 startPosition = trail.transform.position;
+            while (time < 1)
+            {
+                trail.transform.position = Vector3.Lerp(startPosition, hitPoint, time);
+                time += Time.deltaTime / trail.time;
+                yield return null;
+            }
+                trail.transform.position = hitPoint;
+                Destroy(trail.gameObject, trail.time);
+                GameObject impact = Instantiate(bulletImpact, hitPoint, Quaternion.LookRotation(hitNormal));
+                Destroy(trail.gameObject, 2);
+
         }
         void OnCollisionEnter(Collision collision)
         {
