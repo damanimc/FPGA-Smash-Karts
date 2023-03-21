@@ -204,16 +204,17 @@ public class MovementScript : MonoBehaviour, Damagable
         if (Physics.Raycast(shootPoint.position, shootPoint.forward, out RaycastHit hit))
             {
                 UnityEngine.Debug.Log(hit.collider.gameObject.name+" has been hit");
-                hit.collider.gameObject.GetComponent<Damagable>()?.TakeDamage(1);
+                hit.collider.gameObject.GetComponentInParent<Damagable>()?.TakeDamage(10);
             }
         }
         void OnCollisionEnter(Collision collision)
         {
             if (collision.gameObject.tag == "InstaKill")
             {
-                health -= 10;
 
-                UnityEngine.Debug.Log(view.Owner.NickName + " : " + health + "HP");
+                TakeDamage(10);
+
+               
 
 
             }
@@ -254,22 +255,18 @@ public class MovementScript : MonoBehaviour, Damagable
         void Update()
         {
 
-            if (view.IsMine)
-            {
-
-             
-
+         
                 if(Input.GetMouseButtonDown(0))
                 {
                     shoot();
                 }
 
-            }
 
         }
         public void TakeDamage(float damage)
         {
-            view.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+        UnityEngine.Debug.Log("We made it this far");
+       view.RPC("RPC_TakeDamage", RpcTarget.All, damage);
         }
 
         [PunRPC]
@@ -281,6 +278,8 @@ public class MovementScript : MonoBehaviour, Damagable
             }
 
             health -= damage;
+            UnityEngine.Debug.Log(view.Owner.NickName + " : " + health + " HP");
+        
             if (health <= 0)
             {
                 playerManager.Die();
