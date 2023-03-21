@@ -204,7 +204,7 @@ public class MovementScript : MonoBehaviour, Damagable
         if (Physics.Raycast(shootPoint.position, shootPoint.forward, out RaycastHit hit))
             {
                 UnityEngine.Debug.Log(hit.collider.gameObject.name+" has been hit");
-                hit.collider.gameObject.GetComponentInParent<Damagable>()?.TakeDamage(10);
+                hit.collider.gameObject.GetComponentInParent<Damagable>()?.TakeDamage(1);
             }
         }
         void OnCollisionEnter(Collision collision)
