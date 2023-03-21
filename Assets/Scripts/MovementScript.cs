@@ -37,6 +37,7 @@ public class MovementScript : MonoBehaviour, Damagable
     public GameObject bulletImpact;
 
 
+
     private StreamWriter _inputStreamWriter;
 
     private async Task RunProcess()
@@ -302,7 +303,7 @@ public class MovementScript : MonoBehaviour, Damagable
         {
 
             if(view.IsMine){
-                if(Input.GetMouseButtonDown(0))
+                if(button==1 || button==3)
                 {
                     shoot();
                 }

@@ -2,10 +2,12 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.VFX;
+using Photon.Pun;
 
 
 public class GoKart : MonoBehaviour
 {
+    PhotonView view;
 
     [System.Serializable]
     public class StatPowerup
@@ -235,6 +237,7 @@ public class GoKart : MonoBehaviour
 
     void Awake()
     {
+        view = GetComponent<PhotonView>();
         Rigidbody = GetComponent<Rigidbody>();
         m_Inputs = GetComponents<IInput>();
         movementScript = this.gameObject.GetComponent<MovementScript>();
@@ -315,8 +318,10 @@ public class GoKart : MonoBehaviour
         // apply vehicle physics
         if (m_CanMove)
         {
-            MoveVehicle(Input.Accelerate, Input.Brake, Input.TurnInput);
-         //  MoveVehicle(movementScript.toMove, Input.Brake, movementScript.right);
+            if(view.IsMine){
+                // MoveVehicle(Input.Accelerate, Input.Brake, Input.TurnInput);
+                MoveVehicle(movementScript.toMove, Input.Brake, movementScript.right);
+            }
             
         }
         GroundAirbourne();
