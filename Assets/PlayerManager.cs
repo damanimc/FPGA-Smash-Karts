@@ -35,8 +35,8 @@ public class PlayerManager : MonoBehaviour
         Transform spawn= SpawnPlayers.instance.GetSpawnPoint();
         controller = PhotonNetwork.Instantiate("PlayerController", spawn.position, spawn.rotation, 0, new object[] { view.ViewID });
         controller.GetComponent<MovementScript>().playerManager = this;
-        camera.targetObject = controller;
-        camera.target = controller.transform;
+        camera.targetObject = controller.GetComponent<MovementScript>().cameraTarget;
+        camera.target = controller.GetComponent<MovementScript>().cameraTarget.transform;
     }
 
     public void Die()
