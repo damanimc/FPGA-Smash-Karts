@@ -24,6 +24,7 @@ public class MovementScript : MonoBehaviour, Damagable
     private Rigidbody rb;
     PhotonView view;
     [SerializeField] Transform shootPoint;
+    public GameObject cameraTarget;
     [SerializeField] GameObject bulletPrefab;
     // float right = 0.0f;
     // int button;

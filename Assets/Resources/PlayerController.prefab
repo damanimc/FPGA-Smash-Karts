@@ -527,8 +527,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnManager: {fileID: 0}
   health: 0
+  healthChanged: 0
   nameTag: {fileID: 5702115715974329999}
   shootPoint: {fileID: 2089642501428834867}
+  cameraTarget: {fileID: 2987212115739575246}
   bulletPrefab: {fileID: 5912574732028766419, guid: f4cacc00d62fe314fb7a41bc524de1f9, type: 3}
   playerManager: {fileID: 0}
 --- !u!114 &2100524771363334419
