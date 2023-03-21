@@ -14,6 +14,7 @@ public class MovementScript : MonoBehaviour, Damagable
 {
     public SpawnPlayers spawnManager;
     public float health;
+    public bool healthChanged;
     public TMP_Text nameTag;
     float movSpeed = 60;
     float maxSpeed = 15;
@@ -24,164 +25,175 @@ public class MovementScript : MonoBehaviour, Damagable
     PhotonView view;
     [SerializeField] Transform shootPoint;
     [SerializeField] GameObject bulletPrefab;
-    float right = 0.0f;
-    int button;
-    int toMove;
+    // float right = 0.0f;
+    // int button;
+    // int toMove;  uncomment for FPGA
     const float maxHealth = 10f;
     // Variables
     private Vector3 moveForce;
     public PlayerManager playerManager;
-    private StreamWriter _inputStreamWriter;
-
-    private async Task RunProcess()
-    {
-        ProcessStartInfo startInfo = new ProcessStartInfo
-        {
-            FileName = @"C:\intelFPGA_lite\20.1\quartus\bin64\nios2-terminal.exe",
-            Arguments = "--instance 0",
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardInput = true,
-            CreateNoWindow = false
-        };
-
-        Process process = new Process();
-        process.StartInfo = startInfo;
-        process.Start();
-        _inputStreamWriter = process.StandardInput;
-
-        while (true)
-        {
-            if (!process.HasExited)
-            {
-
-                string line = await process.StandardOutput.ReadLineAsync();
-                UnityEngine.Debug.Log(line);
-                //int hlth = healthData.currentHealth;
 
 
-                //   if(0==1){
-                //if(hlth == 100){
-                //    await _inputStreamWriter.WriteLineAsync('f');
-                //    await _inputStreamWriter.FlushAsync();
-                //}
-                //else if(hlth == 0){
-                //    await _inputStreamWriter.WriteLineAsync('d');
-                //    await _inputStreamWriter.FlushAsync();
-                //}
-                //else {
-                //    await _inputStreamWriter.WriteLineAsync('h');
-                //    await _inputStreamWriter.FlushAsync();
-                //    if(hlth > 9){
-                //        string hlths = hlth.ToString();
-                //        await _inputStreamWriter.WriteLineAsync(hlths[0]);
-                //        await _inputStreamWriter.FlushAsync();
-                //        await _inputStreamWriter.WriteLineAsync(hlths[1]);
-                //        await _inputStreamWriter.FlushAsync();
-                //    }
-                //    else{
-                //        await _inputStreamWriter.WriteLineAsync('0');
-                //        await _inputStreamWriter.FlushAsync();
-                //        await _inputStreamWriter.WriteLineAsync((char)hlth);
-                //        await _inputStreamWriter.FlushAsync();
-                //    }
-                // }
-                //health = false;
-                //    }
+    // private StreamWriter _inputStreamWriter;
 
-                //    if (line == "l0")
-                //    {
-                //        right = -1.0f;
-                //        button = 0;
+    // private async Task RunProcess()
+    // {
+    //     ProcessStartInfo startInfo = new ProcessStartInfo
+    //     {
+    //         FileName = @"C:\intelFPGA_lite\20.1\quartus\bin64\nios2-terminal.exe",
+    //         Arguments = "--instance 0",
+    //         UseShellExecute = false,
+    //         RedirectStandardOutput = true,
+    //         RedirectStandardInput = true,
+    //         CreateNoWindow = false
+    //     };
 
-                //    }
-                //    else if (line == "l1")
-                //    {
-                //        right = -1.0f;
-                //        button = 1;
+    //     Process process = new Process();
+    //     process.StartInfo = startInfo;
+    //     process.Start();
+    //     _inputStreamWriter = process.StandardInput;
 
-                //    }
-                //    else if (line == "l2")
-                //    {
-                //        right = -1.0f;
-                //        button = 2;
+    //     while (true)
+    //     {
+    //         if (!process.HasExited)
+    //         {
 
-                //    }
-                //    else if (line == "l3")
-                //    {
-                //        right = -1.0f;
-                //        button = 3;
+    //             string line = await process.StandardOutput.ReadLineAsync();
+    //             UnityEngine.Debug.Log(line);
 
-                //    }
-                //    else if (line == "r0")
-                //    {
-                //        right = 1.0f;
-                //        button = 0;
+    //             if(healthChanged){
+    //                 if(health == 10f){
+    //                     await _inputStreamWriter.WriteLineAsync('f');
+    //                     await _inputStreamWriter.FlushAsync();
+    //                 }
+    //                 else if(health == 9f){
+    //                     await _inputStreamWriter.WriteLineAsync('o');
+    //                     await _inputStreamWriter.FlushAsync();
+    //                 }
+    //                 else if(health == 8f){
+    //                     await _inputStreamWriter.WriteLineAsync('i');
+    //                     await _inputStreamWriter.FlushAsync();
+    //                 }
+    //                 else if(health == 7f){
+    //                     await _inputStreamWriter.WriteLineAsync('u');
+    //                     await _inputStreamWriter.FlushAsync();
+    //                 }
+    //                 else if(health == 6f){
+    //                     await _inputStreamWriter.WriteLineAsync('y');
+    //                     await _inputStreamWriter.FlushAsync();
+    //                 }
+    //                 else if(health == 5f){
+    //                     await _inputStreamWriter.WriteLineAsync('t');
+    //                     await _inputStreamWriter.FlushAsync();
+    //                 }
+    //                 else if(health == 4f){
+    //                     await _inputStreamWriter.WriteLineAsync('r');
+    //                     await _inputStreamWriter.FlushAsync();
+    //                 }
+    //                 else if(health == 3f){
+    //                     await _inputStreamWriter.WriteLineAsync('e');
+    //                     await _inputStreamWriter.FlushAsync();
+    //                 }
+    //                 else if(health == 2f){
+    //                     await _inputStreamWriter.WriteLineAsync('w');
+    //                     await _inputStreamWriter.FlushAsync();
+    //                 }
+    //                 else if(health == 1f){
+    //                     await _inputStreamWriter.WriteLineAsync('q');
+    //                     await _inputStreamWriter.FlushAsync();
+    //                 }
+    //                 else if(health == 0f){
+    //                     await _inputStreamWriter.WriteLineAsync('d');
+    //                     await _inputStreamWriter.FlushAsync();
+    //                 }
+    //                 healthChanged = false;
+    //             }
 
-                //    }
-                //    else if (line == "r1")
-                //    {
-                //        right = 1.0f;
-                //        button = 1;
+    //             if (line == "l0")
+    //             {
+    //                 right = -1.0f;
+    //                 button = 0;
+    //             }
+    //             else if (line == "l1")
+    //             {
+    //                 right = -1.0f;
+    //                 button = 1;
+    //             }
+    //             else if (line == "l2")
+    //             {
+    //                 right = -1.0f;
+    //                 button = 2;
+    //             }
+    //             else if (line == "l3")
+    //             {
+    //                 right = -1.0f;
+    //                 button = 3;
+    //             }
+    //             else if (line == "r0")
+    //             {
+    //                 right = 1.0f;
+    //                 button = 0;
+    //             }
+    //             else if (line == "r1")
+    //             {
+    //                 right = 1.0f;
+    //                 button = 1;
+    //             }
+    //             else if (line == "r2")
+    //             {
+    //                 right = 1.0f;
+    //                 button = 2;
+    //             }
+    //             else if (line == "r3")
+    //             {
+    //                 right = 1.0f;
+    //                 button = 3;
+    //             }
+    //             else if (line == "n0")
+    //             {
+    //                 right = 0.0f;
+    //                 button = 0;
+    //             }
+    //             else if (line == "n1")
+    //             {
+    //                 right = 0.0f;
+    //                 button = 1;
+    //             }
+    //             else if (line == "n2")
+    //             {
+    //                 right = 0.0f;
+    //                 button = 2;
+    //             }
+    //             else if (line == "n3")
+    //             {
+    //                 right = 0.0f;
+    //                 button = 3;
+    //             }
+    //         }
+    //         else
+    //         {
+    //             UnityEngine.Debug.LogError("The process has exited unexpectedly.");
+    //             break;
+    //         }
 
-                //    }
-                //    else if (line == "r2")
-                //    {
-                //        right = 1.0f;
-                //        button = 2;
+    //             // Wait for a short amount of time before checking for new data again
+    //             // await Task.Delay(1); // Delay for 100 milliseconds
+                
+    //     }
 
-                //    }
-                //    else if (line == "r3")
-                //    {
-                //        right = 1.0f;
-                //        button = 3;
+    // } uncomment for FPGA
 
-                //    }
-                //    else if (line == "n0")
-                //    {
-                //        right = 0.0f;
-                //        button = 0;
 
-                //    }
-                //    else if (line == "n1")
-                //    {
-                //        right = 0.0f;
-                //        button = 1;
 
-                //    }
-                //    else if (line == "n2")
-                //    {
-                //        right = 0.0f;
-                //        button = 2;
-
-                //    }
-                //    else if (line == "n3")
-                //    {
-                //        right = 0.0f;
-                //        button = 3;
-
-                //    }
-                //}
-                //else
-                //{
-                //    UnityEngine.Debug.LogError("The process has exited unexpectedly.");
-                //    break;
-                //}
-
-                // Wait for a short amount of time before checking for new data again
-                //await Task.Delay(1); // Delay for 100 milliseconds
-                //}
-            }
-
-        }
-    }
+    
         // Start is called before the first frame update
         void Start()
         {
             
             health = maxHealth;
+            healthChanged = true;
           
-            // RunProcess(); uncomment to use fpga
+            // RunProcess(); uncomment for FPGA
         
             nameTag.text = view.Owner.NickName;
 
@@ -213,6 +225,7 @@ public class MovementScript : MonoBehaviour, Damagable
             {
 
                 TakeDamage(10);
+                
 
                
 
@@ -229,15 +242,15 @@ public class MovementScript : MonoBehaviour, Damagable
                 // }
                 // else {
                 //     toMove = 0;
-                // } uncomment to use fpga
+                // } uncomment for FPGA
 
                 // Moving
-                // moveForce += transform.forward * movSpeed * toMove * Time.deltaTime; uncomment to use fpga
+                // moveForce += transform.forward * movSpeed * toMove * Time.deltaTime; uncomment for FPGA
                 moveForce += transform.forward * movSpeed * Input.GetAxis("Vertical") * Time.deltaTime;
                 rb.position += moveForce * Time.deltaTime;
 
                 // Steering
-                // float steerInput = right; uncomment to use FPGA
+                // float steerInput = right; uncomment for FPGA
                 float steerInput = Input.GetAxis("Horizontal");
                 transform.Rotate(Vector3.up * steerInput * moveForce.magnitude * steerAngle * Time.deltaTime);
 
@@ -278,6 +291,7 @@ public class MovementScript : MonoBehaviour, Damagable
             }
 
             health -= damage;
+            healthChanged = true;
             UnityEngine.Debug.Log(view.Owner.NickName + " : " + health + " HP");
         
             if (health <= 0)
