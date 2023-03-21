@@ -220,7 +220,7 @@ public class MovementScript : MonoBehaviour, Damagable
             {
                 TrailRenderer trail = Instantiate(bulletTrail, shootPoint.position, shootPoint.rotation);
                 
-                StartCoroutine(SpawnTrail(trail, hit.point,hit.normal));
+                StartCoroutine(SpawnTrail(trail, hit.point,hit.normal,true));
                 UnityEngine.Debug.Log(hit.collider.gameObject.name+" has been hit");
                 hit.collider.gameObject.GetComponentInParent<Damagable>()?.TakeDamage(1);
               
@@ -228,23 +228,28 @@ public class MovementScript : MonoBehaviour, Damagable
         else {
             TrailRenderer trail = Instantiate(bulletTrail, shootPoint.position, shootPoint.rotation);
 
-            StartCoroutine(SpawnTrail(trail, shootPoint.position+shootPoint.forward*100, shootPoint.position + shootPoint.forward * 100));
+            StartCoroutine(SpawnTrail(trail, shootPoint.position+shootPoint.forward*1000, shootPoint.position + shootPoint.forward * 1000,false));
         }
         }
-        private IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hitPoint, Vector3 hitNormal)
+        private IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hitPoint, Vector3 hitNormal, bool hitSomething)
         {
             float time = 0;
             Vector3 startPosition = trail.transform.position;
             while (time < 1)
             {
                 trail.transform.position = Vector3.Lerp(startPosition, hitPoint, time);
-                time += Time.deltaTime / trail.time;
+                time += 0.01f ;
                 yield return null;
             }
                 trail.transform.position = hitPoint;
-                Destroy(trail.gameObject, trail.time);
+            Destroy(trail.gameObject, trail.time);
+        if (hitSomething)
+            {
+
+             
                 GameObject impact = Instantiate(bulletImpact, hitPoint, Quaternion.LookRotation(hitNormal));
-                Destroy(trail.gameObject, 2);
+                Destroy(impact.gameObject, 2);
+            }
 
         }
         void OnCollisionEnter(Collision collision)
