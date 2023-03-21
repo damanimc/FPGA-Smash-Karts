@@ -274,33 +274,34 @@ public class MovementScript : MonoBehaviour, Damagable
 
                 // Moving
                 // moveForce += transform.forward * movSpeed * toMove * Time.deltaTime; uncomment for FPGA
-                moveForce += transform.forward * movSpeed * Input.GetAxis("Vertical") * Time.deltaTime;
-                rb.position += moveForce * Time.deltaTime;
+                // moveForce += transform.forward * movSpeed * Input.GetAxis("Vertical") * Time.deltaTime;
+                // rb.position += moveForce * Time.deltaTime;
 
                 // Steering
                 // float steerInput = right; uncomment for FPGA
-                float steerInput = Input.GetAxis("Horizontal");
-                transform.Rotate(Vector3.up * steerInput * moveForce.magnitude * steerAngle * Time.deltaTime);
+                // float steerInput = Input.GetAxis("Horizontal");
+                // transform.Rotate(Vector3.up * steerInput * moveForce.magnitude * steerAngle * Time.deltaTime);
 
                 // drag and max speed limit
-                moveForce *= drag;
-                moveForce = Vector3.ClampMagnitude(moveForce, maxSpeed);
+                // moveForce *= drag;
+                // moveForce = Vector3.ClampMagnitude(moveForce, maxSpeed);
 
                 // traction
-                UnityEngine.Debug.DrawRay(transform.position, moveForce.normalized * 3);
-                UnityEngine.Debug.DrawRay(transform.position, transform.forward * 3, Color.blue);
-                moveForce = Vector3.Lerp(moveForce.normalized, transform.forward, traction * Time.deltaTime) * moveForce.magnitude;
+                // UnityEngine.Debug.DrawRay(transform.position, moveForce.normalized * 3);
+                // UnityEngine.Debug.DrawRay(transform.position, transform.forward * 3, Color.blue);
+                // moveForce = Vector3.Lerp(moveForce.normalized, transform.forward, traction * Time.deltaTime) * moveForce.magnitude;
             }
         }
         // Update is called once per frame
         void Update()
         {
 
-         
+            if(view.IsMine){
                 if(Input.GetMouseButtonDown(0))
                 {
                     shoot();
                 }
+            }
 
 
         }
