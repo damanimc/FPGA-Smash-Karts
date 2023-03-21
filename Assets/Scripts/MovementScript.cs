@@ -26,9 +26,9 @@ public class MovementScript : MonoBehaviour, Damagable
     [SerializeField] Transform shootPoint;
     public GameObject cameraTarget;
     [SerializeField] GameObject bulletPrefab;
-    // float right = 0.0f;
-    // int button;
-    // int toMove;  uncomment for FPGA
+    public float right = 0.0f;
+    public int button;
+    public bool toMove;
     const float maxHealth = 10f;
     // Variables
     private Vector3 moveForce;
@@ -37,154 +37,154 @@ public class MovementScript : MonoBehaviour, Damagable
     public GameObject bulletImpact;
 
 
-    // private StreamWriter _inputStreamWriter;
+    private StreamWriter _inputStreamWriter;
 
-    // private async Task RunProcess()
-    // {
-    //     ProcessStartInfo startInfo = new ProcessStartInfo
-    //     {
-    //         FileName = @"C:\intelFPGA_lite\20.1\quartus\bin64\nios2-terminal.exe",
-    //         Arguments = "--instance 0",
-    //         UseShellExecute = false,
-    //         RedirectStandardOutput = true,
-    //         RedirectStandardInput = true,
-    //         CreateNoWindow = false
-    //     };
+    private async Task RunProcess()
+    {
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            FileName = @"C:\intelFPGA_lite\20.1\quartus\bin64\nios2-terminal.exe",
+            Arguments = "--instance 0",
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardInput = true,
+            CreateNoWindow = false
+        };
 
-    //     Process process = new Process();
-    //     process.StartInfo = startInfo;
-    //     process.Start();
-    //     _inputStreamWriter = process.StandardInput;
+        Process process = new Process();
+        process.StartInfo = startInfo;
+        process.Start();
+        _inputStreamWriter = process.StandardInput;
 
-    //     while (true)
-    //     {
-    //         if (!process.HasExited)
-    //         {
+        while (true)
+        {
+            if (!process.HasExited)
+            {
 
-    //             string line = await process.StandardOutput.ReadLineAsync();
-    //             UnityEngine.Debug.Log(line);
+                string line = await process.StandardOutput.ReadLineAsync();
+                UnityEngine.Debug.Log(line);
 
-    //             if(healthChanged){
-    //                 if(health == 10f){
-    //                     await _inputStreamWriter.WriteLineAsync('f');
-    //                     await _inputStreamWriter.FlushAsync();
-    //                 }
-    //                 else if(health == 9f){
-    //                     await _inputStreamWriter.WriteLineAsync('o');
-    //                     await _inputStreamWriter.FlushAsync();
-    //                 }
-    //                 else if(health == 8f){
-    //                     await _inputStreamWriter.WriteLineAsync('i');
-    //                     await _inputStreamWriter.FlushAsync();
-    //                 }
-    //                 else if(health == 7f){
-    //                     await _inputStreamWriter.WriteLineAsync('u');
-    //                     await _inputStreamWriter.FlushAsync();
-    //                 }
-    //                 else if(health == 6f){
-    //                     await _inputStreamWriter.WriteLineAsync('y');
-    //                     await _inputStreamWriter.FlushAsync();
-    //                 }
-    //                 else if(health == 5f){
-    //                     await _inputStreamWriter.WriteLineAsync('t');
-    //                     await _inputStreamWriter.FlushAsync();
-    //                 }
-    //                 else if(health == 4f){
-    //                     await _inputStreamWriter.WriteLineAsync('r');
-    //                     await _inputStreamWriter.FlushAsync();
-    //                 }
-    //                 else if(health == 3f){
-    //                     await _inputStreamWriter.WriteLineAsync('e');
-    //                     await _inputStreamWriter.FlushAsync();
-    //                 }
-    //                 else if(health == 2f){
-    //                     await _inputStreamWriter.WriteLineAsync('w');
-    //                     await _inputStreamWriter.FlushAsync();
-    //                 }
-    //                 else if(health == 1f){
-    //                     await _inputStreamWriter.WriteLineAsync('q');
-    //                     await _inputStreamWriter.FlushAsync();
-    //                 }
-    //                 else if(health == 0f){
-    //                     await _inputStreamWriter.WriteLineAsync('d');
-    //                     await _inputStreamWriter.FlushAsync();
-    //                 }
-    //                 healthChanged = false;
-    //             }
+                if(healthChanged){
+                    if(health == 10f){
+                        await _inputStreamWriter.WriteLineAsync('f');
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    else if(health == 9f){
+                        await _inputStreamWriter.WriteLineAsync('o');
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    else if(health == 8f){
+                        await _inputStreamWriter.WriteLineAsync('i');
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    else if(health == 7f){
+                        await _inputStreamWriter.WriteLineAsync('u');
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    else if(health == 6f){
+                        await _inputStreamWriter.WriteLineAsync('y');
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    else if(health == 5f){
+                        await _inputStreamWriter.WriteLineAsync('t');
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    else if(health == 4f){
+                        await _inputStreamWriter.WriteLineAsync('r');
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    else if(health == 3f){
+                        await _inputStreamWriter.WriteLineAsync('e');
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    else if(health == 2f){
+                        await _inputStreamWriter.WriteLineAsync('w');
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    else if(health == 1f){
+                        await _inputStreamWriter.WriteLineAsync('q');
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    else if(health == 0f){
+                        await _inputStreamWriter.WriteLineAsync('d');
+                        await _inputStreamWriter.FlushAsync();
+                    }
+                    healthChanged = false;
+                }
 
-    //             if (line == "l0")
-    //             {
-    //                 right = -1.0f;
-    //                 button = 0;
-    //             }
-    //             else if (line == "l1")
-    //             {
-    //                 right = -1.0f;
-    //                 button = 1;
-    //             }
-    //             else if (line == "l2")
-    //             {
-    //                 right = -1.0f;
-    //                 button = 2;
-    //             }
-    //             else if (line == "l3")
-    //             {
-    //                 right = -1.0f;
-    //                 button = 3;
-    //             }
-    //             else if (line == "r0")
-    //             {
-    //                 right = 1.0f;
-    //                 button = 0;
-    //             }
-    //             else if (line == "r1")
-    //             {
-    //                 right = 1.0f;
-    //                 button = 1;
-    //             }
-    //             else if (line == "r2")
-    //             {
-    //                 right = 1.0f;
-    //                 button = 2;
-    //             }
-    //             else if (line == "r3")
-    //             {
-    //                 right = 1.0f;
-    //                 button = 3;
-    //             }
-    //             else if (line == "n0")
-    //             {
-    //                 right = 0.0f;
-    //                 button = 0;
-    //             }
-    //             else if (line == "n1")
-    //             {
-    //                 right = 0.0f;
-    //                 button = 1;
-    //             }
-    //             else if (line == "n2")
-    //             {
-    //                 right = 0.0f;
-    //                 button = 2;
-    //             }
-    //             else if (line == "n3")
-    //             {
-    //                 right = 0.0f;
-    //                 button = 3;
-    //             }
-    //         }
-    //         else
-    //         {
-    //             UnityEngine.Debug.LogError("The process has exited unexpectedly.");
-    //             break;
-    //         }
+                if (line == "l0")
+                {
+                    right = -1.0f;
+                    button = 0;
+                }
+                else if (line == "l1")
+                {
+                    right = -1.0f;
+                    button = 1;
+                }
+                else if (line == "l2")
+                {
+                    right = -1.0f;
+                    button = 2;
+                }
+                else if (line == "l3")
+                {
+                    right = -1.0f;
+                    button = 3;
+                }
+                else if (line == "r0")
+                {
+                    right = 1.0f;
+                    button = 0;
+                }
+                else if (line == "r1")
+                {
+                    right = 1.0f;
+                    button = 1;
+                }
+                else if (line == "r2")
+                {
+                    right = 1.0f;
+                    button = 2;
+                }
+                else if (line == "r3")
+                {
+                    right = 1.0f;
+                    button = 3;
+                }
+                else if (line == "n0")
+                {
+                    right = 0.0f;
+                    button = 0;
+                }
+                else if (line == "n1")
+                {
+                    right = 0.0f;
+                    button = 1;
+                }
+                else if (line == "n2")
+                {
+                    right = 0.0f;
+                    button = 2;
+                }
+                else if (line == "n3")
+                {
+                    right = 0.0f;
+                    button = 3;
+                }
+            }
+            else
+            {
+                UnityEngine.Debug.LogError("The process has exited unexpectedly.");
+                break;
+            }
 
-    //             // Wait for a short amount of time before checking for new data again
-    //             // await Task.Delay(1); // Delay for 100 milliseconds
+                // Wait for a short amount of time before checking for new data again
+                // await Task.Delay(1); // Delay for 100 milliseconds
                 
-    //     }
+        }
 
-    // } uncomment for FPGA
+    } 
 
 
 
@@ -196,7 +196,7 @@ public class MovementScript : MonoBehaviour, Damagable
             health = maxHealth;
             healthChanged = true;
           
-            // RunProcess(); uncomment for FPGA
+            RunProcess(); 
         
             nameTag.text = view.Owner.NickName;
 
@@ -270,7 +270,7 @@ public class MovementScript : MonoBehaviour, Damagable
                 // }
                 // else {
                 //     toMove = 0;
-                // } uncomment for FPGA
+                // } 
 
                 // Moving
                 // moveForce += transform.forward * movSpeed * toMove * Time.deltaTime; uncomment for FPGA
@@ -301,6 +301,13 @@ public class MovementScript : MonoBehaviour, Damagable
                 {
                     shoot();
                 }
+
+                if(button > 1){
+                    toMove = true;
+                }
+                else {
+                    toMove = false;
+                } 
             }
 
 
