@@ -65,48 +65,60 @@ public class MovementScript : MonoBehaviour, Damagable
                 string line = await process.StandardOutput.ReadLineAsync();
                 UnityEngine.Debug.Log(line);
 
-                if(healthChanged){
-                    if(health == 10f){
+                if (healthChanged)
+                {
+                    if (health == 10f)
+                    {
                         await _inputStreamWriter.WriteLineAsync('f');
                         await _inputStreamWriter.FlushAsync();
                     }
-                    else if(health == 9f){
+                    else if (health == 9f)
+                    {
                         await _inputStreamWriter.WriteLineAsync('o');
                         await _inputStreamWriter.FlushAsync();
                     }
-                    else if(health == 8f){
+                    else if (health == 8f)
+                    {
                         await _inputStreamWriter.WriteLineAsync('i');
                         await _inputStreamWriter.FlushAsync();
                     }
-                    else if(health == 7f){
+                    else if (health == 7f)
+                    {
                         await _inputStreamWriter.WriteLineAsync('u');
                         await _inputStreamWriter.FlushAsync();
                     }
-                    else if(health == 6f){
+                    else if (health == 6f)
+                    {
                         await _inputStreamWriter.WriteLineAsync('y');
                         await _inputStreamWriter.FlushAsync();
                     }
-                    else if(health == 5f){
+                    else if (health == 5f)
+                    {
                         await _inputStreamWriter.WriteLineAsync('t');
                         await _inputStreamWriter.FlushAsync();
                     }
-                    else if(health == 4f){
+                    else if (health == 4f)
+                    {
                         await _inputStreamWriter.WriteLineAsync('r');
                         await _inputStreamWriter.FlushAsync();
                     }
-                    else if(health == 3f){
+                    else if (health == 3f)
+                    {
                         await _inputStreamWriter.WriteLineAsync('e');
                         await _inputStreamWriter.FlushAsync();
                     }
-                    else if(health == 2f){
+                    else if (health == 2f)
+                    {
                         await _inputStreamWriter.WriteLineAsync('w');
                         await _inputStreamWriter.FlushAsync();
                     }
-                    else if(health == 1f){
+                    else if (health == 1f)
+                    {
                         await _inputStreamWriter.WriteLineAsync('q');
                         await _inputStreamWriter.FlushAsync();
                     }
-                    else if(health == 0f){
+                    else if (health == 0f)
+                    {
                         await _inputStreamWriter.WriteLineAsync('d');
                         await _inputStreamWriter.FlushAsync();
                     }
@@ -180,169 +192,174 @@ public class MovementScript : MonoBehaviour, Damagable
                 break;
             }
 
-                // Wait for a short amount of time before checking for new data again
-                // await Task.Delay(1); // Delay for 100 milliseconds
-                
-        }
-
-    } 
-
-
-
-    
-        // Start is called before the first frame update
-        void Start()
-        {
-            
-            health = maxHealth;
-            healthChanged = true;
-          
-            RunProcess(); 
-        
-            nameTag.text = view.Owner.NickName;
+            // Wait for a short amount of time before checking for new data again
+            // await Task.Delay(1); // Delay for 100 milliseconds
 
         }
 
-        void Awake()
-        {
-            view = GetComponent<PhotonView>();
-            rb = GetComponent<Rigidbody>();
-            playerManager = PhotonView.Find((int)view.InstantiationData[0]).GetComponent<PlayerManager>();
-        }
-   
-    
-   
-        void shoot()
-        {
-            UnityEngine.Debug.Log(" Shot fired");
+    }
+
+
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
+        health = maxHealth;
+        healthChanged = true;
+
+        RunProcess();
+
+        nameTag.text = view.Owner.NickName;
+
+    }
+
+    void Awake()
+    {
+        view = GetComponent<PhotonView>();
+        rb = GetComponent<Rigidbody>();
+        playerManager = PhotonView.Find((int)view.InstantiationData[0]).GetComponent<PlayerManager>();
+    }
+
+
+
+    void shoot()
+    {
+        UnityEngine.Debug.Log(" Shot fired");
         //GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, shootPoint.position, shootPoint.rotation);
         //bullet.GetComponent<Rigidbody>().velocity = shootPoint.forward * 3f;
         if (Physics.Raycast(shootPoint.position, shootPoint.forward, out RaycastHit hit))
-            {
-                TrailRenderer trail = Instantiate(bulletTrail, shootPoint.position, shootPoint.rotation);
-                
-                StartCoroutine(SpawnTrail(trail, hit.point,hit.normal,true));
-                UnityEngine.Debug.Log(hit.collider.gameObject.name+" has been hit");
-                hit.collider.gameObject.GetComponentInParent<Damagable>()?.TakeDamage(1);
-              
-            }
-        else {
+        {
             TrailRenderer trail = Instantiate(bulletTrail, shootPoint.position, shootPoint.rotation);
 
-            StartCoroutine(SpawnTrail(trail, shootPoint.position+shootPoint.forward*1000, shootPoint.position + shootPoint.forward * 1000,false));
+            StartCoroutine(SpawnTrail(trail, hit.point, hit.normal, true));
+            UnityEngine.Debug.Log(hit.collider.gameObject.name + " has been hit");
+            hit.collider.gameObject.GetComponentInParent<Damagable>()?.TakeDamage(1);
+
         }
-        }
-        private IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hitPoint, Vector3 hitNormal, bool hitSomething)
+        else
         {
-            float time = 0;
-            Vector3 startPosition = trail.transform.position;
-            while (time < 1)
-            {
-                trail.transform.position = Vector3.Lerp(startPosition, hitPoint, time);
-                time += 0.01f ;
-                yield return null;
-            }
-                trail.transform.position = hitPoint;
-            Destroy(trail.gameObject, trail.time);
+            TrailRenderer trail = Instantiate(bulletTrail, shootPoint.position, shootPoint.rotation);
+
+            StartCoroutine(SpawnTrail(trail, shootPoint.position + shootPoint.forward * 1000, shootPoint.position + shootPoint.forward * 1000, false));
+        }
+    }
+
+    private IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hitPoint, Vector3 hitNormal, bool hitSomething)
+    {
+        float time = 0;
+        Vector3 startPosition = trail.transform.position;
+        while (time < 1)
+        {
+            trail.transform.position = Vector3.Lerp(startPosition, hitPoint, time);
+            time += 0.1f;
+            yield return null;
+        }
+        trail.transform.position = hitPoint;
+        Destroy(trail.gameObject, trail.time);
         if (hitSomething)
+        {
+
+
+            GameObject impact = Instantiate(bulletImpact, hitPoint, Quaternion.LookRotation(hitNormal));
+            Destroy(impact.gameObject, 2);
+        }
+
+    }
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "InstaKill")
+        {
+
+            TakeDamage(10);
+
+
+
+
+
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (view.IsMine)
+        {
+            // if(button > 1){
+            //     toMove = 1;
+            // }
+            // else {
+            //     toMove = 0;
+            // } 
+
+            // Moving
+            // moveForce += transform.forward * movSpeed * toMove * Time.deltaTime; uncomment for FPGA
+            // moveForce += transform.forward * movSpeed * Input.GetAxis("Vertical") * Time.deltaTime;
+            // rb.position += moveForce * Time.deltaTime;
+
+            // Steering
+            // float steerInput = right; uncomment for FPGA
+            // float steerInput = Input.GetAxis("Horizontal");
+            // transform.Rotate(Vector3.up * steerInput * moveForce.magnitude * steerAngle * Time.deltaTime);
+
+            // drag and max speed limit
+            // moveForce *= drag;
+            // moveForce = Vector3.ClampMagnitude(moveForce, maxSpeed);
+
+            // traction
+            // UnityEngine.Debug.DrawRay(transform.position, moveForce.normalized * 3);
+            // UnityEngine.Debug.DrawRay(transform.position, transform.forward * 3, Color.blue);
+            // moveForce = Vector3.Lerp(moveForce.normalized, transform.forward, traction * Time.deltaTime) * moveForce.magnitude;
+        }
+    }
+    // Update is called once per frame
+    void Update()
+    {
+
+        if (view.IsMine)
+        {
+            if (button == 1 || button == 3 || Input.GetKeyDown(KeyCode.Space))
             {
-
-             
-                GameObject impact = Instantiate(bulletImpact, hitPoint, Quaternion.LookRotation(hitNormal));
-                Destroy(impact.gameObject, 2);
+                shoot();
             }
 
-        }
-        void OnCollisionEnter(Collision collision)
-        {
-            if (collision.gameObject.tag == "InstaKill")
+            if (button > 1)
             {
-
-                TakeDamage(10);
-                
-
-               
-
-
+                toMove = true;
             }
-        }
-
-        void FixedUpdate()
-        {
-            if (view.IsMine)
+            else
             {
-                // if(button > 1){
-                //     toMove = 1;
-                // }
-                // else {
-                //     toMove = 0;
-                // } 
-
-                // Moving
-                // moveForce += transform.forward * movSpeed * toMove * Time.deltaTime; uncomment for FPGA
-                // moveForce += transform.forward * movSpeed * Input.GetAxis("Vertical") * Time.deltaTime;
-                // rb.position += moveForce * Time.deltaTime;
-
-                // Steering
-                // float steerInput = right; uncomment for FPGA
-                // float steerInput = Input.GetAxis("Horizontal");
-                // transform.Rotate(Vector3.up * steerInput * moveForce.magnitude * steerAngle * Time.deltaTime);
-
-                // drag and max speed limit
-                // moveForce *= drag;
-                // moveForce = Vector3.ClampMagnitude(moveForce, maxSpeed);
-
-                // traction
-                // UnityEngine.Debug.DrawRay(transform.position, moveForce.normalized * 3);
-                // UnityEngine.Debug.DrawRay(transform.position, transform.forward * 3, Color.blue);
-                // moveForce = Vector3.Lerp(moveForce.normalized, transform.forward, traction * Time.deltaTime) * moveForce.magnitude;
+                toMove = false;
             }
         }
-        // Update is called once per frame
-        void Update()
-        {
-
-            if(view.IsMine){
-                if(button==1 || button==3)
-                {
-                    shoot();
-                }
-
-                if(button > 1){
-                    toMove = true;
-                }
-                else {
-                    toMove = false;
-                } 
-            }
 
 
-        }
-        public void TakeDamage(float damage)
-        {
+    }
+    public void TakeDamage(float damage)
+    {
         UnityEngine.Debug.Log("We made it this far");
-       view.RPC("RPC_TakeDamage", RpcTarget.All, damage);
-        }
+        view.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+    }
 
-        [PunRPC]
-        void RPC_TakeDamage(float damage)
+    [PunRPC]
+    void RPC_TakeDamage(float damage)
+    {
+        if (!view.IsMine)
         {
-            if (!view.IsMine)
-            {
-              return;
-            }
-
-            health -= damage;
-            healthChanged = true;
-            UnityEngine.Debug.Log(view.Owner.NickName + " : " + health + " HP");
-        
-            if (health <= 0)
-            {
-                playerManager.Die();
-            }
-
+            return;
         }
-       
-       
+
+        health -= damage;
+        healthChanged = true;
+        UnityEngine.Debug.Log(view.Owner.NickName + " : " + health + " HP");
+
+        if (health <= 0)
+        {
+            playerManager.Die();
+        }
+
+    }
+
+
 
 }

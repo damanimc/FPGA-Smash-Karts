@@ -121,7 +121,7 @@ ModelImporter:
       name: KartRacerMaterial
     second: {fileID: 2100000, guid: 5304db1f3e113764fae919908740f4ba, type: 2}
   materials:
-    materialImportMode: 1
+    materialImportMode: 2
     materialName: 1
     materialSearch: 1
     materialLocation: 1

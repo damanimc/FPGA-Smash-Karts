@@ -6,7 +6,7 @@
     /// Allows custom collision detection and bounce effects when the kart collides to the collision layer.
     /// </summary>
     [RequireComponent(typeof(GoKart))]
-    public class KartBounce : MonoBehaviour
+    public class GoKartBounce : MonoBehaviour
     {
         /// <summary>
         /// Represents a single frame where the bounce was actually triggered. Use this as a flag 
