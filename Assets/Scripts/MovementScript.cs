@@ -209,7 +209,7 @@ public class MovementScript : MonoBehaviour, Damagable
         health = maxHealth;
         healthChanged = true;
 
-        // RunProcess();
+        RunProcess();
 
         nameTag.text = view.Owner.NickName;
 

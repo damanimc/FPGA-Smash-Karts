@@ -34,8 +34,13 @@ public class ScoreboardItem : MonoBehaviourPunCallbacks
         {
             deathsText.text = deaths.ToString() + " deaths";
         }
+        
 
 
+    }
+
+    void Update(){
+        usernameText.text = player.NickName;
     }
 
 
@@ -47,8 +52,6 @@ public class ScoreboardItem : MonoBehaviourPunCallbacks
             {
                 UpdateStats();
             }
-
-
 
 
 
