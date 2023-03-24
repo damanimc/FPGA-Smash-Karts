@@ -11,6 +11,9 @@ public class PlayerManager : MonoBehaviour
 {
     PhotonView view;
     public GameObject controller;
+    int kills = 0;
+    int deaths = 0;
+    int score = 0;
    
     public SmoothFollow camera;
     private void Awake()
@@ -44,5 +47,37 @@ public class PlayerManager : MonoBehaviour
         Debug.Log("Died (Player Manager)");
         PhotonNetwork.Destroy(controller);
         CreateController();
+        deaths++;
+        score-=1;
+        Hashtable hash = new Hashtable();
+        hash.Add("deaths", deaths);
+        hash.Add("score", score);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+
+    }
+
+    public void GetKill(){
+
+        view.RPC("RPC_GetKill", view.Owner);
+
+    }
+
+    [PunRPC]
+    void RPC_GetKill()
+    {
+        kills++;
+        score+=1;
+
+        Hashtable hash = new Hashtable();
+        hash.Add("kills", kills);
+        hash.Add("score", score);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+        
+    }
+    
+    public static PlayerManager Find(Player player){
+
+        return FindObjectsOfType<PlayerManager>().SingleOrDefault(x => x.view.Owner == player);
+
     }
 }

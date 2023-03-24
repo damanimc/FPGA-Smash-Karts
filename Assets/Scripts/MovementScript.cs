@@ -16,11 +16,11 @@ public class MovementScript : MonoBehaviour, Damagable
     public float health;
     public bool healthChanged;
     public TMP_Text nameTag;
-    float movSpeed = 60;
-    float maxSpeed = 15;
-    float drag = 0.98f;
-    float steerAngle = 20;
-    float traction = 3;
+    // float movSpeed = 60;
+    // float maxSpeed = 15;
+    // float drag = 0.98f;
+    // float steerAngle = 20;
+    // float traction = 3;
     private Rigidbody rb;
     PhotonView view;
     [SerializeField] Transform shootPoint;
@@ -209,7 +209,7 @@ public class MovementScript : MonoBehaviour, Damagable
         health = maxHealth;
         healthChanged = true;
 
-        RunProcess();
+        // RunProcess();
 
         nameTag.text = view.Owner.NickName;
 
@@ -281,37 +281,7 @@ public class MovementScript : MonoBehaviour, Damagable
         }
     }
 
-    void FixedUpdate()
-    {
-        if (view.IsMine)
-        {
-            // if(button > 1){
-            //     toMove = 1;
-            // }
-            // else {
-            //     toMove = 0;
-            // } 
 
-            // Moving
-            // moveForce += transform.forward * movSpeed * toMove * Time.deltaTime; uncomment for FPGA
-            // moveForce += transform.forward * movSpeed * Input.GetAxis("Vertical") * Time.deltaTime;
-            // rb.position += moveForce * Time.deltaTime;
-
-            // Steering
-            // float steerInput = right; uncomment for FPGA
-            // float steerInput = Input.GetAxis("Horizontal");
-            // transform.Rotate(Vector3.up * steerInput * moveForce.magnitude * steerAngle * Time.deltaTime);
-
-            // drag and max speed limit
-            // moveForce *= drag;
-            // moveForce = Vector3.ClampMagnitude(moveForce, maxSpeed);
-
-            // traction
-            // UnityEngine.Debug.DrawRay(transform.position, moveForce.normalized * 3);
-            // UnityEngine.Debug.DrawRay(transform.position, transform.forward * 3, Color.blue);
-            // moveForce = Vector3.Lerp(moveForce.normalized, transform.forward, traction * Time.deltaTime) * moveForce.magnitude;
-        }
-    }
     // Update is called once per frame
     void Update()
     {
@@ -338,16 +308,12 @@ public class MovementScript : MonoBehaviour, Damagable
     public void TakeDamage(float damage)
     {
         UnityEngine.Debug.Log("We made it this far");
-        view.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+        view.RPC(nameof(RPC_TakeDamage), view.Owner, damage);
     }
 
     [PunRPC]
-    void RPC_TakeDamage(float damage)
+    void RPC_TakeDamage(float damage, PhotonMessageInfo info)
     {
-        if (!view.IsMine)
-        {
-            return;
-        }
 
         health -= damage;
         healthChanged = true;
@@ -356,6 +322,7 @@ public class MovementScript : MonoBehaviour, Damagable
         if (health <= 0)
         {
             playerManager.Die();
+            PlayerManager.Find(info.Sender).GetKill();
         }
 
     }

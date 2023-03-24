@@ -320,7 +320,7 @@ public class GoKart : MonoBehaviour
         {
             if(view.IsMine){
                 MoveVehicle(Input.Accelerate, Input.Brake, Input.TurnInput);
-                MoveVehicle(movementScript.toMove, Input.Brake, movementScript.right);
+                // MoveVehicle(movementScript.toMove, Input.Brake, movementScript.right);
             }
             
         }
